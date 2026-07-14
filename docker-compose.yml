@@ -1,0 +1,28 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama_llm
+    volumes:
+      - ${HOME}/.ollama:/root/.ollama
+    restart: unless-stopped
+
+  api:
+    image: ghcr.io/thibaultdef/dnd-api:latest
+    env_file:
+      - .env
+    depends_on:
+      - ollama
+    restart: unless-stopped
+
+  frontend:
+    image: ghcr.io/thibaultdef/dnd-ui:latest
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  ollama_data:
